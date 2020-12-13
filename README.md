@@ -17,4 +17,4 @@ yarn run electron:serve
 yarn run electron:build
 ```
 
-![](https://images-1300309047.cos.ap-chengdu.myqcloud.com/blog/jdms.gif)
+![](https://github.com/Yx1aoq1/jdms/blob/master/jdms.gif)
