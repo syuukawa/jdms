@@ -1,24 +1,20 @@
-# js-ms
+## 京东抢购秒杀助手
 
-## Project setup
-```
+主要参考了[liuxingguo](https://github.com/liuxingguo)/**[mjd](https://github.com/liuxingguo/mjd)**这个项目的方法，由于原来的项目用的electron的版本比较低，所以更新了版本，用的`vue-cli-electron-builder`构建，顺便优化了一下交互。
+
+京东的抢购有很多种不同的交互方式所以无法保证百分百成功。
+
+### 使用方法
+
+```yaml
+# install dependencies 安装依赖
 yarn install
+
+# start dev server 研发环境启动
+yarn run electron:serve
+
+# build pack 打包
+yarn run electron:build
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+![jdms](https://images-1300309047.cos.ap-chengdu.myqcloud.com/blog/jdms.gif)
