@@ -18,3 +18,6 @@ yarn run electron:build
 ```
 
 ![](https://github.com/Yx1aoq1/jdms/blob/master/jdms.gif)
+
+### 声明
+* 项目主要是基于学习electron的目的创建的，禁止任何的商用
