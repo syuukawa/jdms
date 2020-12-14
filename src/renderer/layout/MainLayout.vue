@@ -16,6 +16,10 @@
           <a-icon type="profile" />
           <span>任务管理</span>
         </a-menu-item>
+        <a-menu-item key="test">
+          <a-icon type="profile" />
+          <span>接口测试</span>
+        </a-menu-item>
       </a-menu>
     </a-layout-header>
     <a-layout-content class="pd-30">
