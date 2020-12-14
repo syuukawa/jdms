@@ -4,7 +4,7 @@
 import request from 'request-promise'
 import URLS from './url'
 import { handleResponse, getRandomArbitrary } from './utils'
-import log from 'electron-log'
+// import log from 'electron-log'
 
 const UserAgent =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
@@ -243,9 +243,9 @@ async function getItemStock(skuId, buyNum, buyInfo) {
   const cat = html.match(/cat: \[(.*)\]/)[1]
   const venderId = html.match(/venderId:(\d*)/)[1]
   const area = `${buyInfo['addressList'][0]['provinceId']}_${buyInfo['addressList'][0]['cityId']}_${buyInfo['addressList'][0]['countyId']}_${buyInfo['addressList'][0]['townId']}`
-  log.info('cat', cat)
-  log.info('venderId', venderId)
-  log.info('area', area)
+  // log.info('cat', cat)
+  // log.info('venderId', venderId)
+  // log.info('area', area)
   return request({
     uri: URLS.GET_ITEM_STOCK,
     qs: {
