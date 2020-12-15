@@ -5,7 +5,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-
+import log from 'electron-log'
 const jd = window.preload.jd
 
 export default {
@@ -23,9 +23,9 @@ export default {
         const account = this.accountList[0]
         const buyInfo = await jd.getBuyInfo(account.cookie, 100014568588, 1)
         const data = await jd.getItemStock(100014568588, 1, buyInfo)
-        console.log(data)
+        log.info(data)
       } catch (error) {
-        console.log(error)
+        log.info(error)
       }
     }
   }

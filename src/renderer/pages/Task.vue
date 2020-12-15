@@ -13,7 +13,7 @@
       <a-list-item slot="renderItem" slot-scope="item">
         <a-list-item-meta :description="`定时：${formatDate(item.startTime)} , 购买数量：${item.buyNum}`">
           <a slot="title">{{ item.detail.name }}</a>
-          <a-avatar slot="avatar" :src="`//img13.360buyimg.com/n1/${item.detail.imageSrc}`" />
+          <a-avatar slot="avatar" :src="`http://img13.360buyimg.com/n1/${item.detail.imageSrc}`" />
         </a-list-item-meta>
         <a-button
           v-if="isTaskRunning(item.skuId)"
