@@ -43,8 +43,7 @@ module.exports = {
         dmg: {},
         mac: {},
         win: {
-          target: ['nsis', 'zip'],
-          arch: ['x64', 'ia32']
+          target: ['nsis', 'zip']
         },
         nsis: {
           oneClick: false,
