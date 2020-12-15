@@ -7,5 +7,6 @@ export default {
   ADD_ITEM: 'https://cart.jd.com/gate.action',
   GET_ORDER: 'https://trade.jd.com/shopping/order/getOrderInfo.action',
   SUBMIT_ORDER: 'https://trade.jd.com/shopping/order/submitOrder.action',
-  GET_ITEM_STOCK: 'https://c0.3.cn/stock'
+  GET_ITEM_STOCK: 'https://c0.3.cn/stock',
+  GET_SERVER_TIME: 'https://a.jd.com//ajax/queryServerData.html'
 }

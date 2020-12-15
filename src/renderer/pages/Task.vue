@@ -67,7 +67,7 @@ export default {
         return
       }
       let task = setInterval(() => {
-        if (!isSetTime || (isSetTime && +Date.now() >= +startTime)) {
+        if (!isSetTime || (isSetTime && +Date.now() >= +new Date(startTime))) {
           this.createOrder(account, skuId, buyNum, taskType)
         } else {
           this.$message.info('定时执行中，还未到时间')
@@ -93,10 +93,11 @@ export default {
           description: '此账号不再参与本轮抢购~',
           duration: 1
         })
-      } else if (submitResult && submitResult.message) {
+      } else if (submitResult && submitResult.resultCode === 600158) {
         this.$message.info(submitResult.message)
+        this.stopTask(account.pinId)
       } else {
-        this.$message.info('抢购失败，还未到时间')
+        this.$message.info('抢购失败，重试中')
       }
     },
     stopAll() {

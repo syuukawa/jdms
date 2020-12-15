@@ -134,7 +134,11 @@ function selectAllCart(Cookie) {
     },
     resolveWithFullResponse: true
   }).then((resp) => {
-    return handleResponse(resp)
+    const result = handleResponse(resp)
+    if (result && result.sortedWebCartResult) {
+      return result.sortedWebCartResult.success
+    }
+    return false
   })
 }
 
@@ -152,7 +156,11 @@ function clearCart(Cookie) {
     },
     resolveWithFullResponse: true
   }).then((resp) => {
-    return handleResponse(resp)
+    const result = handleResponse(resp)
+    if (result && result.sortedWebCartResult) {
+      return result.sortedWebCartResult.success
+    }
+    return false
   })
 }
 
@@ -179,7 +187,8 @@ async function addGoodsToCart(Cookie, skuId, num) {
     json: true,
     resolveWithFullResponse: true
   }).then((resp) => {
-    return handleResponse(resp)
+    const html = handleResponse(resp)
+    return html.indexOf('成功') > -1
   })
 }
 
@@ -226,6 +235,36 @@ async function orderSubmit(Cookie) {
 }
 
 /**
+ * 请求商品详情页
+ * @param skuId
+ * @returns {Promise<any>}
+ */
+function getItemInfo(skuId) {
+  return request({
+    uri: `https://item.jd.com/${skuId}.html`,
+    headers: {
+      'User-Agent': UserAgent
+    },
+    resolveWithFullResponse: true
+  }).then((resp) => {
+    const html = handleResponse(resp)
+    const name = html.match(/name: \[(.*)\]/)[1]
+    const imageSrc = html.match(/src: \[(.*)\]/)[1]
+    const cat = html.match(/cat: \[(.*)\]/)[1]
+    const venderId = html.match(/venderId:(\d*)/)[1]
+    // log.info('cat', cat)
+    // log.info('venderId', venderId)
+    // log.info('area', area)
+    return {
+      name,
+      imageSrc,
+      cat,
+      venderId
+    }
+  })
+}
+
+/**
  * 查询某个商品的库存
  * @param skuId
  * @param buyNum
@@ -234,18 +273,8 @@ async function orderSubmit(Cookie) {
  */
 async function getItemStock(skuId, buyNum, buyInfo) {
   // 请求商品详情页
-  const html = await request({
-    uri: `https://item.jd.com/${skuId}.html`,
-    headers: {
-      'User-Agent': UserAgent
-    }
-  })
-  const cat = html.match(/cat: \[(.*)\]/)[1]
-  const venderId = html.match(/venderId:(\d*)/)[1]
+  const { cat, venderId } = await getItemInfo(skuId)
   const area = `${buyInfo['addressList'][0]['provinceId']}_${buyInfo['addressList'][0]['cityId']}_${buyInfo['addressList'][0]['countyId']}_${buyInfo['addressList'][0]['townId']}`
-  // log.info('cat', cat)
-  // log.info('venderId', venderId)
-  // log.info('area', area)
   return request({
     uri: URLS.GET_ITEM_STOCK,
     qs: {
@@ -265,6 +294,25 @@ async function getItemStock(skuId, buyNum, buyInfo) {
     },
     resolveWithFullResponse: true
   }).then((resp) => {
+    const result = handleResponse(resp)
+    if (result && result.stock) {
+      const skuState = result.stock.skuState // 商品是否上架
+      const StockState = result.stock.StockState // 商品库存状态：33 -- 现货  0,34 -- 无货  36 -- 采购中  40 -- 可配货
+      return skuState === 1 && [33, 40].includes(StockState)
+    }
+    return false
+  })
+}
+
+/**
+ * 查询京东服务器时间
+ * @returns {Promise<any>}
+ */
+function getServerTime() {
+  return request({
+    uri: URLS.GET_SERVER_TIME,
+    resolveWithFullResponse: true
+  }).then((resp) => {
     return handleResponse(resp)
   })
 }
@@ -277,5 +325,7 @@ export default {
   clearCart,
   addGoodsToCart,
   orderSubmit,
-  getItemStock
+  getItemInfo,
+  getItemStock,
+  getServerTime
 }

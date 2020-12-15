@@ -10,15 +10,12 @@ export const handleResponse = (resp) => {
   let result = parseJson(body)
   try {
     result = JSON.parse(result)
-    if (result && result.sortedWebCartResult) {
-      result = result.sortedWebCartResult.success
-    }
     log.info('response result:', result)
+    return result
   } catch (error) {
     log.info('response body is not JSON.')
-    return body
   }
-  return result
+  return body
 }
 
 function parseJson(body) {

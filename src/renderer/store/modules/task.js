@@ -5,15 +5,12 @@ const jd = window.preload.jd
 const state = {
   /**
    * 任务列表
-   * @property taskId
-   * @property pinId
    * @property skuId
    * @property taskType
    * @property isSetTime
    * @property startTime
    * @property buyNum
    * @property buyInfo
-   * @property account
    */
   task: {}
 }
@@ -30,25 +27,23 @@ const getters = {
   }
 }
 const mutations = {
-  SAVE_OR_UPDATE(state, { taskId, pinId, skuId, taskType, isSetTime, startTime, buyNum, buyInfo, account }) {
-    const origin = state.task[taskId]
-    let params = { taskId, pinId, skuId, taskType, isSetTime, buyNum, buyInfo, account }
-    params.pinId = pinId || origin.pinId
+  SAVE_OR_UPDATE(state, { skuId, taskType, isSetTime, startTime, buyNum, detail }) {
+    const origin = state.task[skuId]
+    let params = { skuId, taskType, isSetTime, startTime, buyNum, detail }
     params.skuId = skuId || origin.skuId
     params.taskType = taskType || origin.taskType
     params.buyNum = buyNum || origin.buyNum
-    params.buyInfo = buyInfo || origin.buyInfo
-    params.account = account || origin.account
+    params.detail = detail || origin.detail
     if (isSetTime === undefined) {
       params.isSetTime = origin.isSetTime
     }
     if (params.isSetTime) {
       params.startTime = startTime || origin.startTime
     }
-    Vue.set(state.task, taskId, params)
+    Vue.set(state.task, skuId, params)
   },
-  REMOVE(state, taskId) {
-    Vue.delete(state.task, taskId)
+  REMOVE(state, skuId) {
+    Vue.delete(state.task, skuId)
   },
   CLEAR_ALL(state) {
     state.task = {}
@@ -62,23 +57,16 @@ const actions = {
    * @param form
    * @returns {Promise<void>}
    */
-  async addTask({ commit, rootGetters }, { pinId, skuId, taskType, isSetTime, startTime, buyNum }) {
-    const account = rootGetters['user/accountList'].find((item) => item.pinId === pinId)
-    let res = await jd.getBuyInfo(account.cookie, skuId, buyNum)
-    if (res.seckillSkuVO) {
-      const taskId = `${pinId}-${skuId}`
-      commit('SAVE_OR_UPDATE', {
-        taskId,
-        pinId,
-        skuId,
-        taskType,
-        isSetTime,
-        startTime,
-        buyNum,
-        buyInfo: res.seckillSkuVO,
-        account
-      })
-    }
+  async addTask({ commit }, { skuId, taskType, isSetTime, startTime, buyNum }) {
+    const detail = await jd.getItemInfo(skuId)
+    commit('SAVE_OR_UPDATE', {
+      skuId,
+      taskType,
+      isSetTime,
+      startTime,
+      buyNum,
+      detail
+    })
   },
   /**
    * 更新商品信息
@@ -86,18 +74,15 @@ const actions = {
    * @param commit
    * @returns {Promise<void>}
    */
-  async checkTaskList({ state, commit, rootGetters }) {
+  async checkTaskList({ state, commit }) {
     for (const key in state.task) {
       // eslint-disable-next-line no-prototype-builtins
       if (state.task.hasOwnProperty(key)) {
-        const task = state.task[key]
-        const account = rootGetters['user/accountList'].find((item) => item.pinId === task.pinId)
-        let res = await jd.getBuyInfo(account.cookie, task.skuId, task.buyNum)
+        const detail = await jd.getItemInfo(key)
         if (res.seckillSkuVO) {
           commit('SAVE_OR_UPDATE', {
-            taskId: key,
-            buyInfo: res.seckillSkuVO,
-            account
+            skuId: key,
+            detail
           })
         }
       }
