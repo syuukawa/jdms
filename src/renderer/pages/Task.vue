@@ -15,9 +15,19 @@
           <a slot="title">{{ item.detail.name }}</a>
           <a-avatar slot="avatar" :src="`//img13.360buyimg.com/n1/${item.detail.imageSrc}`" />
         </a-list-item-meta>
-        <a slot="actions" @click="createOrders(item)">开抢</a>
-        <a slot="actions" @click="stopTaskBySku(item.skuId)">停止</a>
-        <a slot="actions" @click="deleteTask(item.skuId)">删除</a>
+        <a-button
+          v-if="isTaskRunning(item.skuId)"
+          type="link"
+          size="small"
+          slot="actions"
+          @click="stopTaskBySku(item.skuId)"
+        >
+          停止
+        </a-button>
+        <a-button v-else type="link" size="small" slot="actions" @click="createOrders(item)">
+          开抢
+        </a-button>
+        <a-button type="link" size="small" slot="actions" @click="deleteTask(item.skuId)">删除</a-button>
       </a-list-item>
     </a-list>
     <AddTask ref="addTask" />
@@ -27,6 +37,7 @@
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import AddTask from './modal/AddTask'
+// import log from 'electron-log'
 const jd = window.preload.jd
 // 抢购提示语
 const NOTIFIACTION = {
@@ -62,7 +73,8 @@ export default {
     async createOrders({ skuId, buyNum, taskType, isSetTime, startTime }) {
       this.$notification.open({
         message: '开始抢购',
-        description: NOTIFIACTION[taskType]
+        description: NOTIFIACTION[taskType],
+        placement: 'bottomRight'
       })
       // 所有账号都加入抢购
       this.accountList.map((account) => {
@@ -87,13 +99,15 @@ export default {
         this.stopTaskByAccount(account.pinId, skuId)
         this.$notification.open({
           message: `恭喜,账号「${account.name}」已抢到`,
-          description: '此账号不再参与本轮抢购~'
+          description: '此账号不再参与本轮抢购~',
+          placement: 'bottomRight'
         })
       } else if (submitResult && submitResult.resultCode === 600158) {
         this.stopTaskBySku(skuId)
         this.$notification.open({
           message: `商品库存已空，无法继续抢购`,
-          description: '已清除当前任务相关的定时器'
+          description: '已清除当前任务相关的定时器',
+          placement: 'bottomRight'
         })
       } else {
         this.$message.info(submitResult.message)
@@ -109,18 +123,18 @@ export default {
       this.timers = this.timers.filter((timer) => {
         if (timer.pinId === pinId && timer.skuId === skuId) {
           clearInterval(timer.task)
-          return true
+          return false
         }
-        return false
+        return true
       })
     },
     stopTaskBySku(skuId) {
       this.timers = this.timers.filter((timer) => {
         if (timer.skuId === skuId) {
           clearInterval(timer.task)
-          return true
+          return false
         }
-        return false
+        return true
       })
     },
     deleteTask(skuId) {
@@ -135,6 +149,9 @@ export default {
         return '-'
       }
       return dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+    },
+    isTaskRunning(skuId) {
+      return this.timers.some((timer) => timer.skuId === skuId)
     }
   },
   destroyed() {
