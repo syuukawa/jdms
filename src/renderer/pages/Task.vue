@@ -8,15 +8,12 @@
     </a-button>
     <a-list item-layout="horizontal" :data-source="taskList">
       <a-list-item slot="renderItem" slot-scope="item">
-        <a-list-item-meta
-          :description="`${item.account.name}, $${item.buyInfo.skuPrice}, 定时：${formatDate(item.startTime)}`"
-        >
-          <a slot="title">{{ item.buyInfo.skuName }}</a>
-          <a-avatar slot="avatar" :src="`http://img13.360buyimg.com/n5/${item.buyInfo.skuImgUrl}`" />
+        <a-list-item-meta :description="`定时：${formatDate(item.startTime)} , 购买数量：${item.buyNum}`">
+          <a slot="title">{{ item.detail.name }}</a>
+          <a-avatar slot="avatar" :src="`//img13.360buyimg.com/n1/${item.detail.imageSrc}`" />
         </a-list-item-meta>
         <a slot="actions" @click="createOrders(item)">开抢</a>
-        <a slot="actions" @click="stopTask(item.pinId)">停止</a>
-        <a slot="actions" @click="deleteTask(item.taskId)">删除</a>
+        <a slot="actions" @click="deleteTask(item.skuId)">删除</a>
       </a-list-item>
     </a-list>
     <AddTask ref="addTask" />
@@ -26,7 +23,7 @@
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import AddTask from './modal/AddTask'
-
+import log from 'electron-log'
 const jd = window.preload.jd
 
 export default {
@@ -40,6 +37,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('user', ['accountList']),
     ...mapGetters('task', ['taskList'])
   },
   activated() {
@@ -49,33 +47,33 @@ export default {
     showAddTask() {
       this.$refs.addTask.show()
     },
-    async createOrders({ account, skuId, buyNum, taskType, isSetTime, startTime }) {
+    async createOrders({ skuId, buyNum, taskType, isSetTime, startTime }) {
       if (!taskType) {
         this.$Message.info('商品类型有误')
         return
       }
+      const description =
+        taskType === 1
+          ? '该商品是预约抢购商品，需要自行加入到购物车，并确保购物车里不含其他可提交商品'
+          : '该商品是秒杀商品，会自动提交订单'
       this.$notification.open({
         message: '开始抢购',
-        description: `账号${account.name}已开始抢购`,
-        duration: 1
+        description
       })
-      try {
-        await jd.clearCart(account.cookie)
-        await jd.addGoodsToCart(account.cookie, skuId, buyNum)
-      } catch (error) {
-        this.$message.info(error.message)
-        return
-      }
-      let task = setInterval(() => {
-        if (!isSetTime || (isSetTime && +Date.now() >= +new Date(startTime))) {
-          this.createOrder(account, skuId, buyNum, taskType)
-        } else {
-          this.$message.info('定时执行中，还未到时间')
-        }
-      }, 1000)
-      this.timers.push({
-        pinId: account.pinId,
-        task
+      // 所有账号都加入抢购
+      this.accountList.map((account) => {
+        let task = setInterval(() => {
+          if (!isSetTime || (isSetTime && +Date.now() >= +new Date(startTime))) {
+            this.createOrder(account, skuId, buyNum, taskType)
+          } else {
+            log.info(`账号${account.name}抢购中...，还未到抢购时间`)
+            this.$message.info(`账号${account.name}抢购中...，还未到抢购时间`)
+          }
+        }, 1000)
+        this.timers.push({
+          pinId: account.pinId,
+          task
+        })
       })
     },
     async createOrder(account, skuId, buyNum, taskType) {
@@ -88,16 +86,16 @@ export default {
       }
       if (submitResult && submitResult.success) {
         this.stopTask(account.pinId)
+        log.info(`账号${account.name}已抢到，此账号不再参与本轮抢购`)
         this.$notification.open({
           message: `恭喜,账号「${account.name}」已抢到`,
-          description: '此账号不再参与本轮抢购~',
-          duration: 1
+          description: '此账号不再参与本轮抢购~'
         })
       } else if (submitResult && submitResult.resultCode === 600158) {
         this.$message.info(submitResult.message)
         this.stopTask(account.pinId)
       } else {
-        this.$message.info('抢购失败，重试中')
+        this.$message.info(submitResult.message)
       }
     },
     stopAll() {

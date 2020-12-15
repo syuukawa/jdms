@@ -79,12 +79,10 @@ const actions = {
       // eslint-disable-next-line no-prototype-builtins
       if (state.task.hasOwnProperty(key)) {
         const detail = await jd.getItemInfo(key)
-        if (res.seckillSkuVO) {
-          commit('SAVE_OR_UPDATE', {
-            skuId: key,
-            detail
-          })
-        }
+        commit('SAVE_OR_UPDATE', {
+          skuId: key,
+          detail
+        })
       }
     }
   }

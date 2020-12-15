@@ -4,7 +4,7 @@
 import request from 'request-promise'
 import URLS from './url'
 import { handleResponse, getRandomArbitrary } from './utils'
-// import log from 'electron-log'
+import log from 'electron-log'
 
 const UserAgent =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
@@ -248,16 +248,20 @@ function getItemInfo(skuId) {
     resolveWithFullResponse: true
   }).then((resp) => {
     const html = handleResponse(resp)
-    const name = html.match(/name: \[(.*)\]/)[1]
-    const imageSrc = html.match(/src: \[(.*)\]/)[1]
+    const name = html.match(/name: '(.*)'/)[1]
+    const imageSrc = html.match(/src: '(.*)'/)[1]
+    const easyBuyUrl = html.match(/easyBuyUrl:"(.*)"/)[1]
     const cat = html.match(/cat: \[(.*)\]/)[1]
     const venderId = html.match(/venderId:(\d*)/)[1]
-    // log.info('cat', cat)
-    // log.info('venderId', venderId)
-    // log.info('area', area)
+    log.info('name', name)
+    log.info('imageSrc', imageSrc)
+    log.info('easyBuyUrl', easyBuyUrl)
+    log.info('cat', venderId)
+    log.info('venderId', venderId)
     return {
       name,
       imageSrc,
+      easyBuyUrl,
       cat,
       venderId
     }
