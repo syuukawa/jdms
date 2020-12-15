@@ -2,6 +2,7 @@
   "name": "jd-ms",
   "version": "0.1.0",
   "private": true,
+  "author": "Yx1aoq1",
   "scripts": {
     "start": "yarn run electron:serve",
     "serve": "vue-cli-service serve",
