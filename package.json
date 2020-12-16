@@ -2,6 +2,7 @@
   "name": "jd-ms",
   "version": "0.1.0",
   "private": true,
+  "author": "Yx1aoq1",
   "scripts": {
     "start": "yarn run electron:serve",
     "serve": "vue-cli-service serve",
@@ -18,6 +19,7 @@
     "core-js": "^3.6.5",
     "dayjs": "^1.9.7",
     "electron-log": "^4.3.0",
+    "lodash": "^4.17.20",
     "request-promise": "^4.2.6",
     "vue": "^2.6.11",
     "vue-router": "^3.4.9",

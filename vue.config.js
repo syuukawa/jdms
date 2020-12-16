@@ -42,7 +42,13 @@ module.exports = {
         productName: '京东抢购助手',
         dmg: {},
         mac: {},
-        win: {}
+        win: {
+          target: ['nsis', 'zip']
+        },
+        nsis: {
+          oneClick: false,
+          allowToChangeInstallationDirectory: true
+        }
       }
     }
   }

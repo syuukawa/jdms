@@ -1,11 +1,12 @@
 export default {
-  checkAccount: 'https://order.jd.com/lazy/isPlusMember.action',
-  getBuyUrl: 'https://itemko.jd.com/itemShowBtn',
-  getBuyInfo: 'https://marathon.jd.com/seckillnew/orderService/pc/init.action',
-  killOrderSubmit: 'https://marathon.jd.com/seckillnew/orderService/pc/submitOrder.action',
-  selectAll: 'https://cart.jd.com/selectAllItem.action',
-  clearAll: 'https://cart.jd.com/batchRemoveSkusFromCart.action',
-  addItem: 'https://cart.jd.com/gate.action',
-  getOrder: 'https://trade.jd.com/shopping/order/getOrderInfo.action',
-  submitOrder: 'https://trade.jd.com/shopping/order/submitOrder.action'
+  CHECK_ACCOUNT: 'https://order.jd.com/lazy/isPlusMember.action',
+  GET_BUY_INFO: 'https://marathon.jd.com/seckillnew/orderService/pc/init.action',
+  KILL_ORDER_SUBMIT: 'https://marathon.jd.com/seckillnew/orderService/pc/submitOrder.action',
+  SELECT_ALL: 'https://cart.jd.com/selectAllItem.action',
+  CLEAR_ALL: 'https://cart.jd.com/batchRemoveSkusFromCart.action',
+  ADD_ITEM: 'https://cart.jd.com/gate.action',
+  GET_ORDER: 'https://trade.jd.com/shopping/order/getOrderInfo.action',
+  SUBMIT_ORDER: 'https://trade.jd.com/shopping/order/submitOrder.action',
+  GET_ITEM_STOCK: 'https://c0.3.cn/stock',
+  GET_SERVER_TIME: 'https://a.jd.com//ajax/queryServerData.html'
 }

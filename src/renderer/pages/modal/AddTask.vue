@@ -1,13 +1,6 @@
 <template>
   <a-modal title="添加任务" :visible="visible" :confirm-loading="confirmLoading" @ok="handleOk" @cancel="handleCancel">
     <a-form-model ref="form" :model="formParams" :label-col="labelCol" :wrapper-col="wrapperCol">
-      <a-form-model-item label="用户">
-        <a-select v-model="formParams.pinId">
-          <a-select-option v-for="item in accountList" :key="item.pinId" :value="item.pinId">
-            {{ item.name }}
-          </a-select-option>
-        </a-select>
-      </a-form-model-item>
       <a-form-model-item label="抢购类型">
         <a-select v-model="formParams.taskType">
           <a-select-option :value="1">预约抢购</a-select-option>
@@ -45,7 +38,6 @@ export default {
       labelCol: { span: 4 },
       wrapperCol: { span: 18 },
       formParams: {
-        pinId: '',
         taskType: 1,
         isSetTime: true,
         startTime: null,
@@ -53,7 +45,7 @@ export default {
         buyNum: 1
       },
       formRules: {
-        pinId: [{ required: true, message: '必填' }],
+        taskType: [{ required: true, message: '必填' }],
         skuId: [{ required: true, message: '必填' }]
       },
       confirmLoading: false
